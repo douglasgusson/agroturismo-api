@@ -1,18 +1,31 @@
 from typing import List
 
 from fastapi import APIRouter
+from sqlmodel import Session, select
 
-from ..models.tag import Tag, TagIncoming
+from ..core.db import ActiveSession
+from ..models.tag import Tag, TagCreate, TagRead
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[Tag])
-def list_tags():
-    return []
+@router.get("/", response_model=List[TagRead])
+def list_tags(*, session: Session = ActiveSession):
+    tags = session.exec(select(Tag)).all()
+    return tags
 
 
-@router.post("/", response_model=Tag)
-def create_tag(tag_to_save: TagIncoming):
-    return Tag(id=1, content=tag_to_save.content)
+@router.post("/", response_model=TagRead)
+def create_tag(*, tag_to_save: TagCreate, session: Session = ActiveSession):
+    tag = Tag.from_orm(tag_to_save)
+    session.add(tag)
+    session.commit()
+    session.refresh(tag)
 
+    return tag
+
+
+@router.get("/{id}", response_model=TagRead)
+def get_tag(*, id: int, session: Session = ActiveSession):
+    tag = session.get(Tag, id)
+    return tag
