@@ -1,2 +1,5 @@
+cloudinary
 fastapi
+sqlmodel
 uvicorn[standard]
+python-multipart
