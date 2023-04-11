@@ -1,9 +1,9 @@
-from typing import Annotated, List
+from typing import Annotated, List, Union
 
 import cloudinary
 import cloudinary.api
 import cloudinary.uploader
-from fastapi import APIRouter, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile, status
 from sqlmodel import Session, select
 
 from ..core.config import (
@@ -27,8 +27,19 @@ cloudinary.config(
 
 
 @router.get("/", response_model=List[LocalRead])
-async def list_locals(*, session: Session = ActiveSession):
-    locals = session.exec(select(Local)).all()
+async def list_locals(
+    *,
+    category_id: Union[int, None] = Query(None),
+    tags: List[str] = Query(None),
+    session: Session = ActiveSession,
+):
+    print(tags)
+
+    locals = session.exec(
+        select(Local)
+        .where(Local.main_category_id == category_id if category_id else True)
+        .order_by(Local.name)
+    ).all()
     return locals
 
 
@@ -43,7 +54,7 @@ async def create_local(*, local_to_save: LocalCreate, session: Session = ActiveS
 
 @router.get("/{id}", response_model=LocalRead)
 async def get_local_by_id(*, id: int, session: Session = ActiveSession):
-    local = session.exec(select(Local).where(Local.id == id)).first()
+    local = session.get(Local, id)
     if not local:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
@@ -63,7 +74,7 @@ async def find_local_by_slug(*, slug: str, session: Session = ActiveSession):
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_local(*, id: int, session: Session = ActiveSession):
-    local = session.exec(select(Local).where(Local.id == id)).first()
+    local = session.get(Local, id)
     if not local:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
@@ -75,9 +86,9 @@ async def delete_local(*, id: int, session: Session = ActiveSession):
 
 @router.patch("/{id}", response_model=LocalRead)
 async def update_local(
-    *, id: int, local_patch: Local, session: Session = ActiveSession
+    *, id: int, local_patch: LocalCreate, session: Session = ActiveSession
 ):
-    local = session.exec(select(Local).where(Local.id == id)).first()
+    local = session.get(Local, id)
     if not local:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
@@ -97,7 +108,7 @@ async def update_local(
 async def replace_local(
     *, id: int, local_to_update: LocalCreate, session: Session = ActiveSession
 ):
-    local = session.exec(select(Local).where(Local.id == id)).first()
+    local = session.get(Local, id)
     if not local:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
@@ -109,15 +120,6 @@ async def replace_local(
     session.commit()
     session.refresh(local)
     return local
-
-
-@router.get("/find-by-category/{category_id}", response_model=List[Local])
-async def find_local_by_category(*, category_id: int, session: Session = ActiveSession):
-    locals = session.exec(
-        select(Local).where(Local.main_category_id == category_id)
-    ).all()
-
-    return locals
 
 
 @router.post("/add-images/{local_id}", response_model=LocalRead)

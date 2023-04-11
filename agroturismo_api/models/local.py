@@ -1,10 +1,9 @@
-from typing import TYPE_CHECKING, List, Optional
+from typing import List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
-if TYPE_CHECKING:
-    from .category import Category, CategoryRead
-    from .gallery_local import GalleryLocal
+from .category import Category
+from .gallery_local import GalleryLocal, GalleryLocalRead
 
 
 class LocalBase(SQLModel):
@@ -19,8 +18,8 @@ class LocalBase(SQLModel):
 class Local(LocalBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    main_category: Optional["Category"] = Relationship(back_populates="locals")
-    images: Optional["GalleryLocal"] = Relationship(back_populates="local")
+    main_category: Optional[Category] = Relationship(back_populates="locals")
+    images: Optional[GalleryLocal] = Relationship(back_populates="local")
 
 
 class LocalCreate(LocalBase):
@@ -29,3 +28,5 @@ class LocalCreate(LocalBase):
 
 class LocalRead(LocalBase):
     id: int
+    main_category: Optional[Category] = None
+    images: List[GalleryLocalRead] = []

@@ -2,8 +2,9 @@ from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
+from .image import Image
+
 if TYPE_CHECKING:
-    from .image import Image
     from .local import Local
 
 
@@ -21,7 +22,7 @@ class GalleryLocal(GalleryLocalBase, table=True):
     __tablename__ = "gallery_local"
 
     local: Optional["Local"] = Relationship(back_populates="images")
-    image: Optional["Image"] = Relationship(back_populates="gallery_local")
+    image: Optional[Image] = Relationship(back_populates="gallery_local")
 
 
 class GalleryLocalCreate(GalleryLocalBase):
@@ -29,4 +30,4 @@ class GalleryLocalCreate(GalleryLocalBase):
 
 
 class GalleryLocalRead(GalleryLocalBase):
-    pass
+    image: Optional[Image] = None
