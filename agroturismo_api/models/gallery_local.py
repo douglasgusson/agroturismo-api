@@ -22,7 +22,7 @@ class GalleryLocal(GalleryLocalBase, table=True):
     __tablename__ = "gallery_local"
 
     local: Optional["Local"] = Relationship(back_populates="images")
-    image: Optional[Image] = Relationship(back_populates="gallery_local")
+    image: Optional[Image] = Relationship(back_populates="gallery")
 
 
 class GalleryLocalCreate(GalleryLocalBase):

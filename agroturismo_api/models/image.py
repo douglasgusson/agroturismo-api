@@ -15,8 +15,9 @@ class ImageBase(SQLModel):
 
 class Image(ImageBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    public_id: str
 
-    gallery_local: Optional["GalleryLocal"] = Relationship(back_populates="image")
+    gallery: Optional["GalleryLocal"] = Relationship(back_populates="image")
 
 
 class ImageRead(ImageBase):

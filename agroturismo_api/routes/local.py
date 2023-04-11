@@ -131,7 +131,7 @@ async def create_local_gallery(
     local_id: int,
     session: Session = ActiveSession,
 ):
-    local = session.exec(select(Local).where(Local.id == local_id)).first()
+    local = session.get(Local, local_id)
     if not local:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
@@ -150,13 +150,16 @@ async def create_local_gallery(
             url=cloudinary_response["url"],
             width=cloudinary_response["width"],
             height=cloudinary_response["height"],
+            public_id=cloudinary_response["public_id"],
         )
+
         session.add(image)
         session.commit()
 
         gallery_local = GalleryLocal(
             local_id=local.id, image_id=image.id, arrangement=index
         )
+
         session.add(gallery_local)
         session.commit()
 
@@ -165,3 +168,25 @@ async def create_local_gallery(
     session.refresh(local)
 
     return local
+
+
+@router.delete("/delete-image/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_image(*, image_id: int, session: Session = ActiveSession):
+    image = session.get(Image, image_id)
+    gallery = session.exec(
+        select(GalleryLocal).where(GalleryLocal.image_id == image_id)
+    ).first()
+
+    if not image:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Imagem não encontrada"
+        )
+
+    cloudinary_response = cloudinary.uploader.destroy(image.public_id)
+
+    print(cloudinary_response)
+
+    session.delete(gallery)
+    session.delete(image)
+    session.commit()
+    return None
