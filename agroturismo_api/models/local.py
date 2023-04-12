@@ -12,7 +12,7 @@ class LocalBase(SQLModel):
     latitude: float
     longitude: float
     description: str
-    main_category_id: Optional[int] = Field(default=None, foreign_key="category.id")
+    main_category_id: int = Field(foreign_key="category.id")
 
 
 class Local(LocalBase, table=True):

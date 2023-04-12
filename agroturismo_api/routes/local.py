@@ -29,15 +29,18 @@ cloudinary.config(
 @router.get("/", response_model=List[LocalRead])
 async def list_locals(
     *,
+    ids: List[int] = Query(None),
     category_id: Union[int, None] = Query(None),
     tags: List[str] = Query(None),
     session: Session = ActiveSession,
 ):
-    print(tags)
-
     locals = session.exec(
         select(Local)
-        .where(Local.main_category_id == category_id if category_id else True)
+        .where(
+            Local.main_category_id == category_id if category_id else True,
+            Local.id.in_(ids) if ids else True,
+            # Local.tags.any(tags) if tags else True,
+        )
         .order_by(Local.name)
     ).all()
     return locals
