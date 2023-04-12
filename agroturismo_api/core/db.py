@@ -1,10 +1,10 @@
 from fastapi import Depends
 from sqlmodel import Session, SQLModel, create_engine
 
-from .config import DB_URI
+from .config import DATABASE_URL
 
 engine = create_engine(
-    DB_URI,
+    DATABASE_URL,
     connect_args={"check_same_thread": False},
     echo=True,
 )

@@ -8,7 +8,7 @@ API_PREFIX = "/api"
 config = Config(".env")
 
 IS_DEBUG: bool = config("IS_DEBUG", cast=bool, default=False)
-DB_URI: str = config("DB_URI", cast=str, default="sqlite:///./db.sqlite3")
+DATABASE_URL: str = config("DATABASE_URL", cast=str, default="sqlite:///./db.sqlite3")
 
 # Cloudinary config
 CLOUDINARY_CLOUD_NAME: str = config("CLOUDINARY_CLOUD_NAME", cast=str, default="")
