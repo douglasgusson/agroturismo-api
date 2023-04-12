@@ -23,5 +23,19 @@ pip install -r requirements.txt
 ## Execução do projeto:
 
 ```bash
-uvicorn agroturismo_api.app:app --reload
+uvicorn agroturismo_api.main:app --reload
+```
+
+## Execução com Docker:
+
+### Build da imagem:
+
+```bash
+docker build -t agroturismo-api .
+```
+
+### Execução da imagem:
+
+```bash
+docker run -p 8000:8000 agroturismo-api
 ```
