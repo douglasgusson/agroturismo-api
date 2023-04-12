@@ -1,5 +1,10 @@
 cloudinary
 fastapi
 sqlmodel
-uvicorn[standard]
+uvicorn
 python-multipart
+numpy
+psycopg2-binary
+asyncpg
+python-jose[cryptography]
+passlib[bcrypt]
