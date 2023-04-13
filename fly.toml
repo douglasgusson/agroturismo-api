@@ -1,8 +1,9 @@
-# fly.toml file generated for agroturismo on 2023-04-12T13:39:37-03:00
+# fly.toml file generated for agroturismo on 2023-04-12T19:06:19-03:00
 
 app = "agroturismo"
 kill_signal = "SIGINT"
 kill_timeout = 5
+primary_region = "gru"
 processes = []
 
 [env]
