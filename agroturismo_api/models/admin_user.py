@@ -8,27 +8,26 @@ from .user import User
 mapper_registry = registry()
 
 
-class TouristBase(SQLModel):
-    name: str
-    email: str
+class AdminUserBase(SQLModel):
+    pass
 
 
 @mapper_registry.mapped
-class Tourist(User, TouristBase, table=True):
-    __tablename__ = "tourist"
+class AdminUser(User, table=True):
+    __tablename__ = "admin_user"
 
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
     __mapper_args__ = {
-        "polymorphic_identity": "tourist",
+        "polymorphic_identity": "admin",
     }
 
 
-class TouristCreate(TouristBase):
+class AdminUserCreate(AdminUserBase):
     username: str
     password: str
 
 
-class TouristRead(TouristBase):
+class AdminUserRead(AdminUserBase):
     id: int
     username: str
