@@ -1,9 +1,12 @@
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
 from .category import Category
 from .gallery_local import GalleryLocal, GalleryLocalRead
+
+if TYPE_CHECKING:
+    from .itinerary_local import ItineraryLocal
 
 
 class LocalBase(SQLModel):
@@ -20,6 +23,7 @@ class Local(LocalBase, table=True):
 
     main_category: Optional[Category] = Relationship(back_populates="locals")
     images: Optional[GalleryLocal] = Relationship(back_populates="local")
+    itinerary_locals: List["ItineraryLocal"] = Relationship(back_populates="local")
 
 
 class LocalCreate(LocalBase):
