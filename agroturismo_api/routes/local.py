@@ -12,6 +12,7 @@ from ..core.config import (
     CLOUDINARY_CLOUD_NAME,
 )
 from ..core.db import ActiveSession
+from ..models.cost import Cost
 from ..models.gallery_local import GalleryLocal
 from ..models.image import Image
 from ..models.local import Local, LocalCreate, LocalRead
@@ -171,25 +172,3 @@ async def create_local_gallery(
     session.refresh(local)
 
     return local
-
-
-@router.delete("/delete-image/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_image(*, image_id: int, session: Session = ActiveSession):
-    image = session.get(Image, image_id)
-    gallery = session.exec(
-        select(GalleryLocal).where(GalleryLocal.image_id == image_id)
-    ).first()
-
-    if not image:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Imagem não encontrada"
-        )
-
-    cloudinary_response = cloudinary.uploader.destroy(image.public_id)
-
-    print(cloudinary_response)
-
-    session.delete(gallery)
-    session.delete(image)
-    session.commit()
-    return None
