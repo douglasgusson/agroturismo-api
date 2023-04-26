@@ -5,6 +5,7 @@ from sqlmodel import Session, select
 
 from ..core.db import ActiveSession
 from ..models.tourist import Tourist, TouristCreate, TouristRead
+from ..security import validate_username
 
 router = APIRouter()
 
@@ -19,6 +20,8 @@ async def list_tourists(*, session: Session = ActiveSession):
 async def create_tourist(
     *, tourist_to_save: TouristCreate, session: Session = ActiveSession
 ):
+    validate_username(tourist_to_save.username)
+
     tourist = Tourist(**tourist_to_save.dict())
     session.add(tourist)
     session.commit()

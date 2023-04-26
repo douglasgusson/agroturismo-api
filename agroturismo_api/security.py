@@ -145,3 +145,13 @@ AuthenticatedAdminUser = Depends(get_current_admin_user)
 async def validate_token(token: str = Depends(oauth2_scheme)) -> User:
     user = get_current_user(token=token)
     return user
+
+
+def validate_username(username: str) -> None:
+    user = get_user(username=username)
+
+    if user:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Nome de usuário já cadastrado",
+        )
