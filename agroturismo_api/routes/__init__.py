@@ -16,9 +16,13 @@ from .tourist import router as tourist_router
 main_router = APIRouter()
 
 main_router.include_router(local_router, prefix="/locals", tags=["Locals"])
-main_router.include_router(category_router, prefix="/categories", tags=["Categories"])
+main_router.include_router(
+    category_router, prefix="/categories", tags=["Categories"]
+)
 main_router.include_router(image_router, prefix="/images", tags=["Images"])
-main_router.include_router(tourist_router, prefix="/tourists", tags=["Tourists"])
+main_router.include_router(
+    tourist_router, prefix="/tourists", tags=["Tourists"]
+)
 main_router.include_router(
     itinerary_router, prefix="/itineraries", tags=["Itineraries"]
 )
@@ -32,6 +36,10 @@ main_router.include_router(
     tags=["SpecialOpeningHours"],
 )
 main_router.include_router(tag_router, prefix="/tags", tags=["Tags"])
-main_router.include_router(algorithm_router, prefix="/algorithms", tags=["Algorithms"])
-main_router.include_router(admin_user_router, prefix="/admins", tags=["Admins"])
+main_router.include_router(
+    algorithm_router, prefix="/algorithms", tags=["Algorithms"]
+)
+main_router.include_router(
+    admin_user_router, prefix="/admins", tags=["Admins"]
+)
 main_router.include_router(security_router, tags=["Auth"])

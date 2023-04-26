@@ -8,12 +8,18 @@ API_PREFIX = "/api"
 config = Config(".env")
 
 IS_DEBUG: bool = config("IS_DEBUG", cast=bool, default=False)
-DATABASE_URL: str = config("DATABASE_URL", cast=str, default="sqlite:///./db.sqlite3")
+DATABASE_URL: str = config(
+    "DATABASE_URL", cast=str, default="sqlite:///./db.sqlite3"
+)
 
 # Cloudinary config
-CLOUDINARY_CLOUD_NAME: str = config("CLOUDINARY_CLOUD_NAME", cast=str, default="")
+CLOUDINARY_CLOUD_NAME: str = config(
+    "CLOUDINARY_CLOUD_NAME", cast=str, default=""
+)
 CLOUDINARY_API_KEY: str = config("CLOUDINARY_API_KEY", cast=str, default="")
-CLOUDINARY_API_SECRET: str = config("CLOUDINARY_API_SECRET", cast=str, default="")
+CLOUDINARY_API_SECRET: str = config(
+    "CLOUDINARY_API_SECRET", cast=str, default=""
+)
 
 # JWT config
 SECRET_KEY: str = config("SECRET_KEY", cast=str, default="secret")

@@ -11,7 +11,9 @@ from ..models.local import Local
 router = APIRouter()
 
 
-@router.post("/", response_model=ItineraryRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=ItineraryRead, status_code=status.HTTP_201_CREATED
+)
 async def create_itinerary(
     *, itinerary_to_save: ItineraryCreate, session: Session = ActiveSession
 ):

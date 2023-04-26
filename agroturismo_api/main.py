@@ -1,7 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .core.config import API_PREFIX, APP_DESCRIPTION, APP_NAME, APP_VERSION, IS_DEBUG
+from .core.config import (
+    API_PREFIX,
+    APP_DESCRIPTION,
+    APP_NAME,
+    APP_VERSION,
+    IS_DEBUG,
+)
 from .core.db import create_db_and_tables, engine
 from .routes import main_router
 

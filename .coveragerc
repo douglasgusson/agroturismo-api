@@ -1,0 +1,8 @@
+[run]
+source = agroturismo_api
+
+[report]
+omit =
+    */python?.?/*
+    */site-packages/nose/*
+    agroturismo_api/__main__.py

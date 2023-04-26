@@ -19,7 +19,8 @@ def get_coords(ids: List[int], session: Session) -> List[Tuple[float, float]]:
         local = session.get(Local, id)
         if not local:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Local não encontrado",
             )
         coords.append((local.latitude, local.longitude))
     return coords
@@ -34,7 +35,8 @@ async def calculate_best_route_guided_local_search(
     """
     if ids is None:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="IDs não informados"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="IDs não informados",
         )
 
     # Obtém as coordenadas dos locais
@@ -71,7 +73,8 @@ async def calculate_best_route_tabu_search(
     """
     if ids is None:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="IDs não informados"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="IDs não informados",
         )
 
     # Obtém as coordenadas dos locais

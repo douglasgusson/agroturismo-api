@@ -17,6 +17,7 @@ class AdminUser(User, table=True):
     __tablename__ = "admin_user"
 
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    is_superuser: bool = Field(default=False)
 
     __mapper_args__ = {
         "polymorphic_identity": "admin",

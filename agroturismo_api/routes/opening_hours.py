@@ -20,29 +20,19 @@ async def get_opening_hours(*, local_id: int, session: Session = ActiveSession):
         .order_by(OpeningHours.weekday)
     ).all()
 
-    if not opening_hours:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Não foram encontrados horários de funcionamento para o local: {local_id}",
-        )
-
     return opening_hours
 
 
 @router.post("/", response_model=OpeningHours, status_code=status.HTTP_201_CREATED)
 def create_opening_hours(
-    *, session: Session = ActiveSession, opening_hours_to_save: OpeningHoursCreate
+    *,
+    session: Session = ActiveSession,
+    opening_hours_to_save: OpeningHoursCreate,
 ):
     """
     Create a new opening_hours
     """
     opening_hours = OpeningHours(**opening_hours_to_save.dict())
-
-    if opening_hours.start_time >= opening_hours.end_time:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="O horário de início deve ser menor que o horário de fim",
-        )
 
     if opening_hours.weekday < 0 or opening_hours.weekday > 6:
         raise HTTPException(

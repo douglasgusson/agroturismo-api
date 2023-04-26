@@ -16,7 +16,9 @@ async def list_admin_users(*, session: Session = ActiveSession):
     return tourists
 
 
-@router.post("/", response_model=AdminUserRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=AdminUserRead, status_code=status.HTTP_201_CREATED
+)
 async def create_admin_user(
     *, admin_user_to_save: AdminUserCreate, session: Session = ActiveSession
 ):
@@ -27,3 +29,16 @@ async def create_admin_user(
     session.commit()
     session.refresh(admin_user)
     return admin_user
+
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_admin_user(*, id: int, session: Session = ActiveSession):
+    admin_user = session.get(AdminUser, id)
+    if not admin_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuário admin não encontrado",
+        )
+    session.delete(admin_user)
+    session.commit()
+    return None

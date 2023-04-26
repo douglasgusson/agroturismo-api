@@ -13,7 +13,9 @@ class Itinerary(ItineraryBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
     tourist_id: int = Field(default=None, foreign_key="tourist.id")
-    itinerary_locals: List[ItineraryLocal] = Relationship(back_populates="itinerary")
+    itinerary_locals: List[ItineraryLocal] = Relationship(
+        back_populates="itinerary"
+    )
 
 
 class ItineraryCreate(ItineraryBase):

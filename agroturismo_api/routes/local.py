@@ -61,7 +61,8 @@ async def get_local_by_id(*, id: int, session: Session = ActiveSession):
     local = session.get(Local, id)
     if not local:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Local não encontrado",
         )
     return local
 
@@ -71,7 +72,8 @@ async def find_local_by_slug(*, slug: str, session: Session = ActiveSession):
     local = session.exec(select(Local).where(Local.slug == slug)).first()
     if not local:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Local não encontrado",
         )
     return local
 
@@ -81,7 +83,8 @@ async def delete_local(*, id: int, session: Session = ActiveSession):
     local = session.get(Local, id)
     if not local:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Local não encontrado",
         )
     session.delete(local)
     session.commit()
@@ -95,7 +98,8 @@ async def update_local(
     local = session.get(Local, id)
     if not local:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Local não encontrado",
         )
 
     patch_data = local_patch.dict(exclude_unset=True)
@@ -115,7 +119,8 @@ async def replace_local(
     local = session.get(Local, id)
     if not local:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Local não encontrado",
         )
 
     local = Local(**local_to_update.dict(), id=id)
@@ -130,7 +135,8 @@ async def replace_local(
 async def create_local_gallery(
     *,
     image_files: Annotated[
-        list[UploadFile], File(description="Multiple image files as UploadFile")
+        list[UploadFile],
+        File(description="Multiple image files as UploadFile"),
     ],
     local_id: int,
     session: Session = ActiveSession,
@@ -138,14 +144,15 @@ async def create_local_gallery(
     local = session.get(Local, local_id)
     if not local:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Local não encontrado"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Local não encontrado",
         )
 
     for index, image_file in enumerate(image_files):
         filename_without_extension = image_file.filename.split(".")[0]
         cloudinary_response = cloudinary.uploader.upload(
-            folder="agroturismo/locais",
-            public_id=f"{local.slug}-{filename_without_extension}",
+            folder=f"agroturismo/locais/{local.slug}",
+            public_id=filename_without_extension,
             file=image_file.file,
             overwrite=True,
         )

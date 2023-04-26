@@ -23,7 +23,9 @@ class Local(LocalBase, table=True):
 
     main_category: Optional[Category] = Relationship(back_populates="locals")
     images: Optional[GalleryLocal] = Relationship(back_populates="local")
-    itinerary_locals: List["ItineraryLocal"] = Relationship(back_populates="local")
+    itinerary_locals: List["ItineraryLocal"] = Relationship(
+        back_populates="local"
+    )
 
 
 class LocalCreate(LocalBase):

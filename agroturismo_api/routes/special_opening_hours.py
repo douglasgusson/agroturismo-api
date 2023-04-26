@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, HTTPException, status
@@ -18,20 +19,19 @@ async def get_special_opening_hours(*, local_id: int, session: Session = ActiveS
     Get special_opening_hours by local_id
     """
     special_opening_hours = session.exec(
-        select(SpecialOpeningHours).where(SpecialOpeningHours.local_id == local_id)
-    ).all()
-
-    if not special_opening_hours:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Não foram encontrados horários especiais para o local: {local_id}",
+        select(SpecialOpeningHours).where(
+            SpecialOpeningHours.local_id == local_id
+            and SpecialOpeningHours.opening_date >= datetime.today()
         )
+    ).all()
 
     return special_opening_hours
 
 
 @router.post(
-    "/", response_model=SpecialOpeningHours, status_code=status.HTTP_201_CREATED
+    "/",
+    response_model=SpecialOpeningHours,
+    status_code=status.HTTP_201_CREATED,
 )
 def create_special_opening_hours(
     *,

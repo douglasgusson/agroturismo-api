@@ -5,11 +5,17 @@ from sqlmodel import Session, desc, select
 
 from ..core.db import ActiveSession
 from ..models.review import Review, ReviewCreate, ReviewRead
+from ..security import AuthenticatedTouristUser
 
 router = APIRouter()
 
 
-@router.post("/", response_model=ReviewRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/",
+    response_model=ReviewRead,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[AuthenticatedTouristUser],
+)
 async def create_review(
     *, review_to_save: ReviewCreate, session: Session = ActiveSession
 ):
@@ -34,7 +40,8 @@ async def delete_review(*, id: int, session: Session = ActiveSession):
 
     if not review:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Avaliação não encontrada"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Avaliação não encontrada",
         )
 
     session.delete(review)

@@ -16,7 +16,9 @@ async def list_tourists(*, session: Session = ActiveSession):
     return tourists
 
 
-@router.post("/", response_model=TouristRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=TouristRead, status_code=status.HTTP_201_CREATED
+)
 async def create_tourist(
     *, tourist_to_save: TouristCreate, session: Session = ActiveSession
 ):

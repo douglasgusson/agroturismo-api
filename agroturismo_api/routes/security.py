@@ -1,15 +1,24 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlmodel import Session
 
-from ..core.config import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
+from ..core.config import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    REFRESH_TOKEN_EXPIRE_MINUTES,
+)
+from ..core.db import ActiveSession
+from ..models.user import User, UserPasswordPatch, UserRead, get_password_hash
 from ..security import (
+    AuthenticatedFreshUser,
+    AuthenticatedUser,
     RefreshToken,
     Token,
     authenticate_user,
     create_access_token,
     create_refresh_token,
+    get_current_user,
     get_user,
     validate_token,
 )
@@ -68,3 +77,50 @@ async def refresh_token(form_data: RefreshToken):
         "refresh_token": refresh_token,
         "token_type": "Bearer",
     }
+
+
+@router.get("/profile", response_model=UserRead)
+async def get_profile_user(current_user: User = AuthenticatedUser):
+    """
+    Get profile from current user
+    """
+    return current_user
+
+
+@router.patch(
+    "/{user_id}/password/",
+    response_model=UserRead,
+    dependencies=[AuthenticatedFreshUser],
+)
+async def update_user_password(
+    *,
+    user_id: int,
+    session: Session = ActiveSession,
+    request: Request,
+    user_patch: UserPasswordPatch,
+):
+    # Query the content
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    # Check the user can update the password
+    current_user: User = get_current_user(request=request)
+    if user.id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="Você não pode atualizar esta senha de usuário",
+        )
+
+    if not user_patch.password == user_patch.password_confirm:
+        raise HTTPException(
+            status_code=400, detail="As senhas não correspondem"
+        )
+
+    # Update the password
+    user.password = get_password_hash(user_patch.password)
+
+    # Commit the session
+    session.commit()
+    session.refresh(user)
+    return user

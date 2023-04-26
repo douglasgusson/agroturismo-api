@@ -14,7 +14,10 @@ def local_search(solution, dist_matrix):
         for i in range(len(solution) - 1):
             for j in range(i + 1, len(solution)):
                 new_solution = copy.deepcopy(solution)
-                new_solution[i], new_solution[j] = new_solution[j], new_solution[i]
+                new_solution[i], new_solution[j] = (
+                    new_solution[j],
+                    new_solution[i],
+                )
                 new_cost = calculate_solution_cost(new_solution, dist_matrix)
                 if new_cost < best_cost:
                     solution = new_solution

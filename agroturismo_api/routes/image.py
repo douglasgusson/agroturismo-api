@@ -32,7 +32,8 @@ async def delete_image(*, image_id: int, session: Session = ActiveSession):
 
     if not image:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Imagem não encontrada"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Imagem não encontrada",
         )
 
     cloudinary_response = cloudinary.uploader.destroy(image.public_id)

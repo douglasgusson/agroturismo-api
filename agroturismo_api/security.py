@@ -77,7 +77,7 @@ def get_current_user(
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="Não foi possível validar as credenciais",
         headers={"WWW-Authenticate": "Bearer"},
     )
 
@@ -140,6 +140,34 @@ async def get_current_admin_user(
 
 
 AuthenticatedAdminUser = Depends(get_current_admin_user)
+
+
+async def get_current_admin_superuser(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    if not isinstance(current_user, AdminUser) or not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Previlégios de super administrador são necessários",
+        )
+    return current_user
+
+
+AuthenticatedAdminSuperUser = Depends(get_current_admin_superuser)
+
+
+async def get_current_tourist_user(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    if not isinstance(current_user, Tourist):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Previlégios de turista são necessários",
+        )
+    return current_user
+
+
+AuthenticatedTouristUser = Depends(get_current_tourist_user)
 
 
 async def validate_token(token: str = Depends(oauth2_scheme)) -> User:

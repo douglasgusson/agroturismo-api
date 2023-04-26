@@ -46,6 +46,11 @@ def verify_password(plain_password, hashed_password) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
+class UserBase(SQLModel):
+    username: str
+    disabled: bool = False
+
+
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     username: str = Field(sa_column_kwargs={"unique": True})
@@ -57,3 +62,14 @@ class User(SQLModel, table=True):
         "polymorphic_identity": "user",
         "polymorphic_on": "user_type",
     }
+
+
+class UserRead(UserBase):
+    id: int
+
+
+class UserPasswordPatch(SQLModel):
+    """This is to accept password for changing"""
+
+    password: str
+    password_confirm: str

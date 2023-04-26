@@ -23,22 +23,28 @@ def get_category_by_id(*, id: int, session: Session = ActiveSession):
     category = session.exec(select(Category).where(Category.id == id)).first()
     if not category:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Categoria não encontrada"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Categoria não encontrada",
         )
     return category
 
 
 @router.get("/find-by-slug/{slug}", response_model=CategoryRead)
 def find_category_by_slug(*, slug: str, session: Session = ActiveSession):
-    category = session.exec(select(Category).where(Category.slug == slug)).first()
+    category = session.exec(
+        select(Category).where(Category.slug == slug)
+    ).first()
     if not category:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Categoria não encontrada"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Categoria não encontrada",
         )
     return category
 
 
-@router.post("/", response_model=CategoryRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=CategoryRead, status_code=status.HTTP_201_CREATED
+)
 def create_category(
     category_to_save: CategoryCreate, *, session: Session = ActiveSession
 ):
@@ -54,7 +60,8 @@ def delete_category(*, id: int, session: Session = ActiveSession):
     category = session.exec(select(Category).where(Category.id == id)).first()
     if not category:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Categoria não encontrada"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Categoria não encontrada",
         )
     session.delete(category)
     session.commit()
@@ -63,12 +70,16 @@ def delete_category(*, id: int, session: Session = ActiveSession):
 
 @router.patch("/{id}", response_model=CategoryRead)
 def update_category(
-    *, category_to_update: CategoryCreate, id: int, session: Session = ActiveSession
+    *,
+    category_to_update: CategoryCreate,
+    id: int,
+    session: Session = ActiveSession
 ):
     category = session.exec(select(Category).where(Category.id == id)).first()
     if not category:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Categoria não encontrada"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Categoria não encontrada",
         )
 
     patch_data = category_to_update.dict(exclude_unset=True)
@@ -83,12 +94,16 @@ def update_category(
 
 @router.put("/{id}", response_model=CategoryRead)
 def replace_category(
-    *, category_to_replace: CategoryCreate, id: int, session: Session = ActiveSession
+    *,
+    category_to_replace: CategoryCreate,
+    id: int,
+    session: Session = ActiveSession
 ):
     category = session.exec(select(Category).where(Category.id == id)).first()
     if not category:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Categoria não encontrada"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Categoria não encontrada",
         )
 
     category = Category(**category_to_replace.dict(), id=id)
