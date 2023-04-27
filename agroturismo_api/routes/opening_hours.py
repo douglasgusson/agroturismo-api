@@ -40,11 +40,11 @@ def create_opening_hours(
             detail="O dia da semana deve ser um número entre 0 e 6. 0 para domingo, 1 para segunda, etc.",
         )
 
+    # check if there is already an opening_hours for this local and weekday
     opening_hours_already_exists = session.exec(
-        select(OpeningHours).where(
-            OpeningHours.weekday == opening_hours.weekday
-            and OpeningHours.local_id == opening_hours.local_id
-        )
+        select(OpeningHours)
+        .where(OpeningHours.local_id == opening_hours.local_id)
+        .where(OpeningHours.weekday == opening_hours.weekday)
     ).first()
 
     if opening_hours_already_exists:
