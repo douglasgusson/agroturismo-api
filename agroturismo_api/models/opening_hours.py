@@ -25,6 +25,8 @@ class OpeningHoursBase(SQLModel):
 
 
 class OpeningHours(OpeningHoursBase, table=True):
+    __tablename__ = "opening_hours"
+
     id: Optional[int] = Field(default=None, primary_key=True)
 
 
