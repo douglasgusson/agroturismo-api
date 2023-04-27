@@ -4,7 +4,7 @@ import cloudinary
 import cloudinary.api
 import cloudinary.uploader
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile, status
-from sqlmodel import Session, select
+from sqlmodel import Session, or_, select
 
 from ..core.config import (
     CLOUDINARY_API_KEY,
@@ -30,16 +30,26 @@ cloudinary.config(
 @router.get("/", response_model=List[LocalRead])
 async def list_locals(
     *,
+    search: str = Query(None),
     ids: List[int] = Query(None),
     category_id: Union[int, None] = Query(None),
     tags: List[str] = Query(None),
     session: Session = ActiveSession,
 ):
+    text_search_condition = or_(
+        Local.name.ilike(f"%{search}%"),
+        Local.description.ilike(f"%{search}%"),
+        Local.address.ilike(f"%{search}%"),
+        Local.website.ilike(f"%{search}%"),
+        Local.phone.ilike(f"%{search}%"),
+    )
+
     locals = session.exec(
         select(Local)
         .where(
             Local.main_category_id == category_id if category_id else True,
             Local.id.in_(ids) if ids else True,
+            text_search_condition if search else True,
             # Local.tags.any(tags) if tags else True,
         )
         .order_by(Local.name)
