@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 class CategoryBase(SQLModel):
     name: str
-    slug: str
+    slug: str = Field(unique=True, index=True)
 
 
 class Category(CategoryBase, table=True):

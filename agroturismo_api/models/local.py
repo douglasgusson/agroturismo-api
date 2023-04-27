@@ -11,9 +11,12 @@ if TYPE_CHECKING:
 
 class LocalBase(SQLModel):
     name: str
-    slug: str
+    slug: str = Field(unique=True, index=True)
     latitude: float
     longitude: float
+    address: str
+    website: Optional[str] = None
+    phone: Optional[str] = None
     description: str
     main_category_id: int = Field(foreign_key="category.id")
 
@@ -23,9 +26,7 @@ class Local(LocalBase, table=True):
 
     main_category: Optional[Category] = Relationship(back_populates="locals")
     images: Optional[GalleryLocal] = Relationship(back_populates="local")
-    itinerary_locals: List["ItineraryLocal"] = Relationship(
-        back_populates="local"
-    )
+    itinerary_locals: List["ItineraryLocal"] = Relationship(back_populates="local")
 
 
 class LocalCreate(LocalBase):
