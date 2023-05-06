@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Query, status
 from sqlmodel import Session
 
 from ..core.db import ActiveSession
-from ..models.local import Local, LocalBase
+from ..models.local import Local, LocalRead
 from ..services.algorithms import guided_local_search, tabu_search
 
 router = APIRouter()
@@ -26,7 +26,7 @@ def get_coords(ids: List[int], session: Session) -> List[Tuple[float, float]]:
     return coords
 
 
-@router.get("/guided-local-search", response_model=List[LocalBase])
+@router.get("/guided-local-search", response_model=List[LocalRead])
 async def calculate_best_route_guided_local_search(
     *, ids: List[int] = Query(None), session: Session = ActiveSession
 ):
@@ -64,7 +64,7 @@ async def calculate_best_route_guided_local_search(
     return locals
 
 
-@router.get("/tabu-search", response_model=List[LocalBase])
+@router.get("/tabu-search", response_model=List[LocalRead])
 async def calculate_best_route_tabu_search(
     *, ids: List[int] = Query(None), session: Session = ActiveSession
 ):
