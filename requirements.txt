@@ -9,3 +9,6 @@ asyncpg
 python-jose[cryptography]
 passlib[bcrypt]
 typer
+httpx
+python-tsp
+
