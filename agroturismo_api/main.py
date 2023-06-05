@@ -15,6 +15,7 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "https://agroturismo.vercel.app",
+    "https://agroturismo.capixaba.dev",
 ]
 
 
