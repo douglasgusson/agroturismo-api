@@ -4,6 +4,8 @@ from sqlmodel import Field, Relationship, SQLModel
 
 from .category import Category
 from .gallery_local import GalleryLocal, GalleryLocalRead
+from .tag import Tag, TagRead
+from .tag_local import TagLocal
 
 if TYPE_CHECKING:
     from .itinerary_local import ItineraryLocal
@@ -27,13 +29,15 @@ class Local(LocalBase, table=True):
     main_category: Optional[Category] = Relationship(back_populates="locals")
     images: Optional[GalleryLocal] = Relationship(back_populates="local")
     itinerary_locals: List["ItineraryLocal"] = Relationship(back_populates="local")
+    tags: List[Tag] = Relationship(link_model=TagLocal)
 
 
 class LocalCreate(LocalBase):
-    pass
+    tags_ids: List[int] = []
 
 
 class LocalRead(LocalBase):
     id: int
     main_category: Optional[Category] = None
     images: List[GalleryLocalRead] = []
+    tags: List[TagRead] = []

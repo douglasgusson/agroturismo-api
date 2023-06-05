@@ -17,7 +17,8 @@ def list_tags(*, session: Session = ActiveSession):
 
 
 @router.post(
-    "/", response_model=TagRead, dependencies=[AuthenticatedAdminSuperUser]
+    "/", response_model=TagRead, 
+    # dependencies=[AuthenticatedAdminSuperUser]
 )
 def create_tag(*, tag_to_save: TagCreate, session: Session = ActiveSession):
     tag = Tag.from_orm(tag_to_save)
