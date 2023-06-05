@@ -4,7 +4,7 @@ import cloudinary
 import cloudinary.api
 import cloudinary.uploader
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile, status
-from sqlmodel import Session, or_, select
+from sqlmodel import Session, or_, select, case
 
 from ..core.config import (
     CLOUDINARY_API_KEY,
@@ -44,6 +44,11 @@ async def list_locals(
         Local.phone.ilike(f"%{search}%"),
     )
 
+    id_ordering = case(
+        {_id: index for index, _id in enumerate(ids)},
+        value=Local.id,
+    )
+
     locals = session.exec(
         select(Local)
         .where(
@@ -52,7 +57,7 @@ async def list_locals(
             text_search_condition if search else True,
             # Local.tags.any(tags) if tags else True,
         )
-        .order_by(Local.name)
+        .order_by(id_ordering)
     ).all()
     return locals
 

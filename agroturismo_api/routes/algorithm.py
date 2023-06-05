@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 from fastapi import APIRouter, HTTPException, Query, status
-from sqlmodel import Session
+from sqlmodel import Session, case
 
 import numpy as np
 
@@ -105,6 +105,7 @@ async def calculate_best_route_tabu_search(
     # Retorna a lista de locais ordenados
     return locals
 
+
 @router.get("/tsp", response_model=List[LocalRead])
 async def calculate_tsp_route(
     *,
@@ -140,11 +141,18 @@ async def calculate_tsp_route(
     permutation = list(map(lambda i: (i - 1), permutation[1:]))
     locals_ids = [ids[i] for i in permutation]
 
-    # seleciona os locais
-    locals = session.query(Local).filter(Local.id.in_(locals_ids)).all()
+    id_ordering = case(
+        {_id: index for index, _id in enumerate(locals_ids)},
+        value=Local.id,
+    )
 
-    # ordena os locais
-    locals = sorted(locals, key=lambda local: locals_ids.index(local.id))
+    # seleciona os locais
+    locals = (
+        session.query(Local)
+        .filter(Local.id.in_(locals_ids))
+        .order_by(id_ordering)
+        .all()
+    )
 
     # Retorna a lista de locais ordenados
     return locals
