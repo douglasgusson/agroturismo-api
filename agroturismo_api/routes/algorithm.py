@@ -141,16 +141,16 @@ async def calculate_tsp_route(
     permutation = list(map(lambda i: (i - 1), permutation[1:]))
     locals_ids = [ids[i] for i in permutation]
 
-    id_ordering = case(
+    ordering = case(
         {_id: index for index, _id in enumerate(locals_ids)},
         value=Local.id,
-    )
+    ) if locals_ids else Local.id
 
     # seleciona os locais
     locals = (
         session.query(Local)
         .filter(Local.id.in_(locals_ids))
-        .order_by(id_ordering)
+        .order_by(ordering)
         .all()
     )
 

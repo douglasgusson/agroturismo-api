@@ -44,10 +44,10 @@ async def list_locals(
         Local.phone.ilike(f"%{search}%"),
     )
 
-    id_ordering = case(
+    ordering = case(
         {_id: index for index, _id in enumerate(ids)},
         value=Local.id,
-    )
+    ) if ids else Local.name
 
     locals = session.exec(
         select(Local)
@@ -57,7 +57,7 @@ async def list_locals(
             text_search_condition if search else True,
             # Local.tags.any(tags) if tags else True,
         )
-        .order_by(id_ordering)
+        .order_by(ordering)
     ).all()
     return locals
 
