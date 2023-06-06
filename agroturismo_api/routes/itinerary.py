@@ -7,20 +7,29 @@ from ..core.db import ActiveSession
 from ..models.itinerary import Itinerary, ItineraryCreate, ItineraryRead
 from ..models.itinerary_local import ItineraryLocal
 from ..models.local import Local
+from ..models.tourist import Tourist
+from ..security import AuthenticatedTouristUser
 
 router = APIRouter()
 
 
 @router.post(
-    "/", response_model=ItineraryRead, status_code=status.HTTP_201_CREATED
+    "/",
+    response_model=ItineraryRead,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[AuthenticatedTouristUser],
 )
 async def create_itinerary(
-    *, itinerary_to_save: ItineraryCreate, session: Session = ActiveSession
+    *,
+    itinerary_to_save: ItineraryCreate,
+    tourist: Tourist = AuthenticatedTouristUser,
+    session: Session = ActiveSession,
 ):
     """
     Create a new itinerary
     """
     itinerary = Itinerary(**itinerary_to_save.dict())
+    itinerary.tourist_id = tourist.id
 
     locals = session.exec(
         select(Local).where(Local.id.in_(itinerary_to_save.local_ids))
@@ -70,7 +79,7 @@ async def get_public_itineraries(
     *,
     local_ids: List[int] = Query(None),
     limit: int = 10,
-    session: Session = ActiveSession
+    session: Session = ActiveSession,
 ):
     """
     Get public itineraries
